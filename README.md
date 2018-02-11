@@ -1,5 +1,5 @@
 # whistle-the-dots
 
-test: Yang can push
+test:
 
 collective play class assignment
