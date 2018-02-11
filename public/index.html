@@ -1,34 +1,74 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
-    <script src="sketch.js"></script>
-    <script src="pitchdetect.js"></script>
 
+<head>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.sound.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-    <button onclick="setVolumeControl()">use volume</button>
-    <button onclick="toggleLiveInput()">use pitch</button>
+<body>
+  <script src="sketch.js"></script>
+  <script src="pitchdetect.js"></script>
+  <script src="adjust_voice.js"></script>
+  <!-- use those 3 div to divide page into 3 part:
+    1, left, title, and buttons.
+    2, middle, canvas,
+    3, right, show some help, instructions, and names. -->
+  <div id="leftPart">
 
+    <div id="title">
+      <h1> Whistle </h1>
+      <h1> The </h1>
+      <h1 id="titleYellowDot"> DOTS</h1>
+      <p>Make the dot across all the checkpoints, by your vioce.</p>
+      <hr/>
+      <h5 id="whatImControlling">Now controlling the ...</h5>
+      <button onclick="toggleControll()">Change</button>
 
-    <div id="hideStuff">
-      <button onclick="this.innerText = togglePlayback()">use demo audio</button>
-      <button onclick="toggleOscillator()">use oscillator</button>
-      <div id="detector" class="vague">
+      <!-- No longer need this button since I call it automatically -->
+      <!-- <button onclick="toggleLiveInput()">use pitch</button> -->
+
+      <h5>Adjusting max & min input can make it easier</h5>
+      <button id="adjustPitch" onclick="adjuster.AdjustPitch()">Adjust</button>
+      <button id="adjustVolume" onclick="adjuster.AdjustVolume()">Adjust</button>
+    </div>
+  </div>
+
+  <div id="canvasHolder">
+
+  </div>
+
+  <div id="rightPart">
+    <div class="howtoplay">
+      <h3>How To Play</h3>
+      <p>You and your friend will control the dot together, by your sound.
+        <br> Movement on X axis is subjected to the pitch, while on Y is to the volume.
+      </p>
+      <hr/>
+      <h3>Credit</h3>
+      <p>Aiden, Ellen, Maria, Yang.
+      </p>
+    </div>
+
+  </div>
+
+  <div id="hideStuff">
+    <button onclick="this.innerText = togglePlayback()">use demo audio</button>
+    <button onclick="toggleOscillator()">use oscillator</button>
+    <div id="detector" class="vague">
       <div class="pitch"><span id="pitch">--</span>Hz</div>
       <div class="note"><span id="note">--</span></div>
       <canvas id="output" width=300 height=42></canvas>
       <div id="detune"><span id="detune_amt">--</span><span id="flat">cents &#9837;</span><span id="sharp">cents &#9839;</span></div>
-      </div>
     </div>
+  </div>
 
 
-  </body>
+</body>
+
 </html>

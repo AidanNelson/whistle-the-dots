@@ -1,5 +1,4 @@
 # whistle-the-dots
-
 Collective Play class assignment, Spring 2018
 
 to do:

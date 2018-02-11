@@ -5,6 +5,7 @@ let mic;
 let volArray = [];
 
 let pitchArray = [];
+let w, h;
 
 let player = {
   x: 0,
@@ -31,75 +32,96 @@ socket.on('pitch', function(pitch) {
 
 
 function setup() {
-  createCanvas(1000, 1000);
-  player.x = width/2;
-  player.y = height/2;
+
+  //Yang edit: I wish canvas could adjust itself by browser/
+  var canvas = createCanvas(windowWidth * 0.58, windowWidth * 0.58, );
+  canvas.parent('canvasHolder');
+  player.x = width / 2;
+  player.y = height / 2;
 
   mic = new p5.AudioIn()
   mic.start();
 
   fft = new p5.FFT();
   fft.setInput(mic);
+  //initial controller
+  toggleControll();
 }
 
 
-function draw(){
-  background(200);
-
-  if (volumeControlOn) {
-      getVolume();
-  }
-
-  if (pitchControlOn) {
-      getPitch();
-  }
+function draw() {
+  //check the result of adjustment
+  // if ((frameCount % 60) == 1 ) {
+  //   console.log(adjuster);
+  // }
+  background('#898F97');
+  // Yang edit: I moved this "if" inside the function so that I can debug easily.
+  // which means, I read both pitch and volume, but I only "emit" one to server.
+  getVolume();
+  getPitch();
 
   noStroke();
-  fill(0,255,0);
+  fill(0, 255, 0);
   ellipse(player.x, player.y, 100, 100);
 }
 
-function setVolumeControl(){
+//Yang edit: I changed the name to toggle controll;
+function toggleControll() {
+  let ImControlling;
   volumeControlOn = !volumeControlOn;
-  console.log("volume is on? :"+ volumeControlOn);
+  console.log(volumeControlOn, pitchControlOn);
   pitchControlOn = !volumeControlOn;
+  console.log(volumeControlOn, pitchControlOn);
+  if (volumeControlOn) {
+    ImControlling = "Now Controlling \nThe Y axis (Volume) "
+    document.getElementById('adjustVolume').style.display = "block";
+    document.getElementById('adjustPitch').style.display = "none";
+  }
+  else {
+    //Yang: if don't call this, the pitch won't work.
+    toggleLiveInput();
+    ImControlling = "Now Controlling \nThe X axis (Pitch) "
+    document.getElementById('adjustVolume').style.display = "none";
+    document.getElementById('adjustPitch').style.display = "block";
+  }
+  document.getElementById('whatImControlling').innerHTML = ImControlling;
 }
 
 function getVolume() {
   let micLevel = mic.getLevel();
-  // console.log(micLevel);
+  console.log(micLevel);
   volArray.unshift(micLevel);
 
   averageMic = 0;
-	if (volArray.length > 50) {
-		for (let i = 0; i < volArray.length; i++) {
-			averageMic += volArray[i];
-		}
-		averageMic *= (1 / volArray.length);
-		volArray.pop();
-	}
-  let maxVolume = 0.6;
-  let mappedMic = map(averageMic, 0, maxVolume, 0, 1);
+  if (volArray.length > 50) {
+    for (let i = 0; i < volArray.length; i++) {
+      averageMic += volArray[i];
+    }
+    averageMic *= (1 / volArray.length);
+    volArray.pop();
+  }
 
-  socket.emit('volume', mappedMic);
+  let mappedMic = map(averageMic, 0, adjuster.volumemax, 0, 1);
+  // Yang edit: only emit this data to server when volumeControlOn
+  if (volumeControlOn) {
+    socket.emit('volume', mappedMic);
+  }
 }
 
 
 function getPitch() {
   pitchArray.unshift(gamePitch);
-  // console.log(gamePitch);
-
   averagePitch = 0;
-	if (pitchArray.length > 50) {
-		for (let i = 0; i < pitchArray.length; i++) {
-			averagePitch += pitchArray[i];
-		}
-		averagePitch *= (1 / pitchArray.length);
-		pitchArray.pop();
-	}
-  let minPitch = 200;
-  let maxPitch = 1800;
-  let mappedPitch = map(averagePitch, minPitch, maxPitch, 0, 1);
-
-  socket.emit('pitch', mappedPitch);
+  if (pitchArray.length > 50) {
+    for (let i = 0; i < pitchArray.length; i++) {
+      averagePitch += pitchArray[i];
+    }
+    averagePitch *= (1 / pitchArray.length);
+    pitchArray.pop();
+  }
+  let mappedPitch = map(averagePitch, adjuster.pitchmin, adjuster.pitchmax, 0, 1);
+  // Yang edit: only emit this data to server when pitchControlOn
+  if (pitchControlOn) {
+    socket.emit('pitch', mappedPitch);
+  }
 }
