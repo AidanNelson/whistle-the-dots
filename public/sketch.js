@@ -89,7 +89,7 @@ function toggleControll() {
 
 function getVolume() {
   let micLevel = mic.getLevel();
-  console.log(micLevel);
+  // console.log(micLevel);
   volArray.unshift(micLevel);
 
   averageMic = 0;

@@ -91,3 +91,10 @@ hr {
 #titleYellowDot {
   color: #FFD74E;
 }
+
+#adjusterControlButton {
+  background: #677383;
+  width: 128px;
+  height: 32px;
+  color: #fff;
+}

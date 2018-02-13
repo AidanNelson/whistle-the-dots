@@ -9,93 +9,147 @@ class ADJUSTER {
     this.reads = [];
   }
 
-  AdjustPitch() {
-    // CreateDomForAdjust();
-    CreateDom();
-    document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your lowest pitch and your highest pitch.<br>";
-    document.getElementById('adjCountDown').innerHTML = "Recording will start in 2 seconds.";
-    // starting in 2 seconds;
-    setTimeout(
-      function() {
-        document.getElementById('adjCountDown').innerHTML = ">> RECORD NOW <<";
-        this.reads = [];
-        //keep geting data samples every 20ms
-        let accquireData = setInterval(
-          function() {
-            this.reads.push(gamePitch)
-          },
-          20);
-        //stop collecting and analyze data after 2 seconds
-        setTimeout(function() {
-          clearInterval(accquireData);
-          document.getElementById('adjCountDown').innerHTML = "successfully adjusted!";
-          let tem = MaxMinToAverage(this.reads, 20);
-          //this.pitchmax = tem[1];
-          adjuster.pitchmax = tem[1];
-          console.log(tem);
-          adjuster.pitchmin = tem[0];
-          this.reads = [];
-          setTimeout(function() {
-            ClearAllDom();
-          }, 1000);
-        }, 3000);
-      },
-      3000);
+  AdjustPitch(stage) {
+    if (stage == 1) {
+      CreateDom();
+      document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your lowest pitch and your highest pitch.<br>";
+      document.getElementById('adjCountDown').innerHTML = "Click Button to Start";
+      document.getElementById('adjusterControlButton').innerHTML = "Start Recording";
+      document.getElementById('adjusterControlButton').onclick = function () {
+        adjuster.AdjustPitch(2);
+      }
+    }
+
+    if (stage == 2) {
+      document.getElementById('adjCountDown').innerHTML = ">> RECORDING NOW <<";
+      this.reads = [];
+      //keep geting data samples every 20ms
+      var accquireData = setInterval(
+        function() {
+          adjuster.reads.push(gamePitch)
+        },
+        20);
+      document.getElementById('adjusterControlButton').innerHTML = 'Stop Recording';
+
+      document.getElementById('adjusterControlButton').onclick = function () {
+        adjuster.AdjustPitch(3);
+      };
+    }
+
+    if (stage == 3) {
+      document.getElementById('adjusterControlButton').style.display = 'none';
+      clearInterval(accquireData);
+      document.getElementById('adjCountDown').innerHTML = "Successfully Adjusted!";
+      let tem = MaxMinSmooth(adjuster.reads, 20);
+      adjuster.pitchmax = tem[1];
+      console.log(tem);
+      adjuster.pitchmin = tem[0];
+      adjuster.reads = [];
+      setTimeout(function() {
+        ClearAllDom();
+      }, 1500);
+    }
   }
 
-  AdjustVolume() {
-    CreateDom();
-    document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your softest volume & your loudest volume.<br>";
-    document.getElementById('adjCountDown').innerHTML = "recording will start in 2 seconds";
-    // starting in 2 seconds;
-    setTimeout(
-      function() {
-        document.getElementById('adjCountDown').innerHTML = ">> RECORD NOW <<";
-        this.reads = [];
-        //keep geting data samples every 20ms
-        let accquireData = setInterval(
-          function() {
-            this.reads.push(mic.getLevel())
-          },
-          20);
-        //stop collecting and analyze data after 2 seconds
-        setTimeout(function() {
-          clearInterval(accquireData);
-          document.getElementById('adjCountDown').innerHTML = "successfully adjusted!";
-          let tem = MaxMinToAverage(this.reads, 20);
-          adjuster.volumemax = tem[1];
-          console.log(tem);
-          adjuster.volumemin = tem[0];
-          this.reads = [];
-          setTimeout(function() {
-            ClearAllDom();
-          }, 1000);
-        }, 3000);
-      },
-      3000);
+  AdjustVolume(stage) {
+    if (stage == 1) {
+      CreateDom();
+      document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your softest volume & your loudest volume.<br>";
+      document.getElementById('adjCountDown').innerHTML = "Click Button to Start";
+      document.getElementById('adjusterControlButton').innerHTML = "Start Recording";
+      document.getElementById('adjusterControlButton').onclick = function () {
+        adjuster.AdjustVolume(2);
+      }
+    }
 
+    if (stage == 2) {
+      document.getElementById('adjCountDown').innerHTML = ">> RECORDING NOW <<";
+      this.reads = [];
+      //keep geting data samples every 20ms
+      var accquireData = setInterval(
+        function() {
+          adjuster.reads.push(mic.getLevel())
+        },
+        20);
+      document.getElementById('adjusterControlButton').innerHTML = 'Stop Recording';
+
+      document.getElementById('adjusterControlButton').onclick = function () {
+        adjuster.AdjustVolume(3);
+      };
+    }
+
+    if (stage == 3) {
+      document.getElementById('adjusterControlButton').style.display = 'none';
+      clearInterval(accquireData);
+      document.getElementById('adjCountDown').innerHTML = "Successfully Adjusted!";
+      let tem = MaxMinSmooth(adjuster.reads, 20);
+      adjuster.volumemax = tem[1];
+      console.log(tem);
+      adjuster.volumemin = tem[0];
+      adjuster.reads = [];
+      setTimeout(function() {
+        ClearAllDom();
+      }, 1500);
+    }
   }
+
+  // AdjustVolume() {
+  //   CreateDom();
+  //   document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your softest volume & your loudest volume.<br>";
+  //   document.getElementById('adjCountDown').innerHTML = "recording will start in 2 seconds";
+  //   // starting in 2 seconds;
+  //   setTimeout(
+  //     function() {
+  //       document.getElementById('adjCountDown').innerHTML = ">> RECORD NOW <<";
+  //       this.reads = [];
+  //       //keep geting data samples every 20ms
+  //       let accquireData = setInterval(
+  //         function() {
+  //           this.reads.push(mic.getLevel())
+  //         },
+  //         20);
+  //       //stop collecting and analyze data after 2 seconds
+  //       setTimeout(function() {
+  //         clearInterval(accquireData);
+  //         document.getElementById('adjCountDown').innerHTML = "successfully adjusted!";
+  //         let tem = MaxMinToAverage(this.reads, 20);
+  //         adjuster.volumemax = tem[1];
+  //         console.log(tem);
+  //         adjuster.volumemin = tem[0];
+  //         this.reads = [];
+  //         setTimeout(function() {
+  //           ClearAllDom();
+  //         }, 1000);
+  //       }, 3000);
+  //     },
+  //     3000);
+  //
+  // }
 
 }
 
 // make a instance
 var adjuster = new ADJUSTER();
 
-function MaxMinToAverage(array, howmany) {
+function MaxMinSmooth(array, percentToSample) {
+  //abandoned 10%
+  let abandoned = Math.floor(array.length / 10);
+  //get 20% percent
+  let howmany = Math.floor((array.length / 100) * percentToSample);
   array.sort(function(a, b) {
     return a - b
   });
   console.log(array);
 
-  let max20 = 0;
-  let min20 = 0;
+  let maxSum = 0;
+  let minSum = 0;
 
   for (var i = 0; i <= howmany; i++) {
-    max20 += array[array.length - 11 - i];
-    min20 += array[i + 11];
+    maxSum += array[array.length - abandoned - i];
+    minSum += array[i + abandoned];
   }
 
-  let minAndMax = [min20 / howmany, max20 / howmany, ];
+  let minAndMax = [minSum / howmany, maxSum / howmany,];
   console.log(minAndMax);
   return minAndMax;
 }
@@ -112,11 +166,26 @@ function CreateDom() {
   let countDown = document.createElement('h1');
   countDown.id = 'adjCountDown';
 
+
+  let startButton = document.createElement('button');
+  startButton.id = 'adjusterControlButton';
+
+  //adding a start button
+
   containerDiv.appendChild(title);
   containerDiv.appendChild(countDown);
+  containerDiv.appendChild(startButton);
 }
 
 function ClearAllDom() {
   let adjustersDom = document.getElementsByClassName('adjusters');
   adjustersDom[0].parentNode.removeChild(adjustersDom[0]);
+}
+
+
+
+class TIMER {
+  constructor() {
+    ti
+  }
 }
