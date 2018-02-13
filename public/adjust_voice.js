@@ -12,12 +12,12 @@ class ADJUSTER {
   AdjustPitch() {
     // CreateDomForAdjust();
     CreateDom();
-    document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please keeping making voicefor about 2 seconds, <br> please make sure including <br> your low pitch voice and hight pitch voice ";
-    document.getElementById('adjCountDown').innerHTML = "will begin in 2 seconds";
+    document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your lowest pitch and your highest pitch.<br>";
+    document.getElementById('adjCountDown').innerHTML = "Recording will start in 2 seconds.";
     // starting in 2 seconds;
     setTimeout(
       function() {
-        document.getElementById('adjCountDown').innerHTML = "Now Please Make Voice...";
+        document.getElementById('adjCountDown').innerHTML = ">> RECORD NOW <<";
         this.reads = [];
         //keep geting data samples every 20ms
         let accquireData = setInterval(
@@ -28,7 +28,7 @@ class ADJUSTER {
         //stop collecting and analyze data after 2 seconds
         setTimeout(function() {
           clearInterval(accquireData);
-          document.getElementById('adjCountDown').innerHTML = "Successfully adjusted. \n Thanks!";
+          document.getElementById('adjCountDown').innerHTML = "successfully adjusted!";
           let tem = MaxMinToAverage(this.reads, 20);
           //this.pitchmax = tem[1];
           adjuster.pitchmax = tem[1];
@@ -45,12 +45,12 @@ class ADJUSTER {
 
   AdjustVolume() {
     CreateDom();
-    document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please keeping making voicefor about 2 seconds, <br> please make sure including <br> your low volume voice and high volume voice ";
-    document.getElementById('adjCountDown').innerHTML = "will begin in 2 seconds";
+    document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your softest volume & your loudest volume.<br>";
+    document.getElementById('adjCountDown').innerHTML = "recording will start in 2 seconds";
     // starting in 2 seconds;
     setTimeout(
       function() {
-        document.getElementById('adjCountDown').innerHTML = "Now Please Make Voice...";
+        document.getElementById('adjCountDown').innerHTML = ">> RECORD NOW <<";
         this.reads = [];
         //keep geting data samples every 20ms
         let accquireData = setInterval(
@@ -61,7 +61,7 @@ class ADJUSTER {
         //stop collecting and analyze data after 2 seconds
         setTimeout(function() {
           clearInterval(accquireData);
-          document.getElementById('adjCountDown').innerHTML = "Successfully adjusted. \n Thanks!";
+          document.getElementById('adjCountDown').innerHTML = "successfully adjusted!";
           let tem = MaxMinToAverage(this.reads, 20);
           adjuster.volumemax = tem[1];
           console.log(tem);

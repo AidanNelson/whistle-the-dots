@@ -73,14 +73,14 @@ function toggleControll() {
   pitchControlOn = !volumeControlOn;
   console.log(volumeControlOn, pitchControlOn);
   if (volumeControlOn) {
-    ImControlling = "Now Controlling \nThe Y axis (Volume) "
+    ImControlling = "You are now controlling \nthe Y axis (Volume) "
     document.getElementById('adjustVolume').style.display = "block";
     document.getElementById('adjustPitch').style.display = "none";
   }
   else {
     //Yang: if don't call this, the pitch won't work.
     toggleLiveInput();
-    ImControlling = "Now Controlling \nThe X axis (Pitch) "
+    ImControlling = "You are now controlling \nthe X axis (Pitch) "
     document.getElementById('adjustVolume').style.display = "none";
     document.getElementById('adjustPitch').style.display = "block";
   }
