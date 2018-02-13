@@ -71,15 +71,13 @@ function draw() {
   getVolume();
   getPitch();
 
-  if (mouseIsPressed){
-    player.x = mouseX;
-    player.y = mouseY;
-  }
-  
+  // if (mouseIsPressed){
+  //   player.x = mouseX;
+  //   player.y = mouseY;
+  // }
+
   level.update(player.x,player.y,50);
   level.display();
-
-
 
   noStroke();
   fill(0, 255, 0);
