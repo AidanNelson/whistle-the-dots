@@ -17,21 +17,22 @@ let gamePitch = 0;
 let volumeControlOn = false;
 let pitchControlOn = true;
 
-// Listen for confirmation of connection
-socket.on('connect', function() {
-  console.log("Connected");
-});
-
-socket.on('volume', function(volume) {
-  player.y = constrain(map(volume, 0, 1, height, 0), 0, height);
-});
-
-socket.on('pitch', function(pitch) {
-  player.x = constrain(map(pitch, 0, 1, 0, width), 0, width);
-});
-
+let level;
+let levelOne;
 
 function setup() {
+  // Listen for confirmation of connection
+  socket.on('connect', function() {
+    console.log("Connected");
+  });
+
+  socket.on('volume', function(volume) {
+    player.y = constrain(map(volume, 0, 1, height, 0), 0, height);
+  });
+
+  socket.on('pitch', function(pitch) {
+    player.x = constrain(map(pitch, 0, 1, 0, width), 0, width);
+  });
 
   //Yang edit: I wish canvas could adjust itself by browser/
   var canvas = createCanvas(windowWidth * 0.58, windowWidth * 0.58, );
@@ -39,11 +40,21 @@ function setup() {
   player.x = width / 2;
   player.y = height / 2;
 
+  levelOne = [];
+  for (let i = 0; i< 10; i++){
+    // let x = floor(random(width));
+    // let y = floor(random(height));
+    let newDot = {
+      x: floor(random(width)),
+      y: floor(random(height))
+    }
+    levelOne.push(newDot);
+  }
+  level = new Level(levelOne);
+
   mic = new p5.AudioIn()
   mic.start();
 
-  fft = new p5.FFT();
-  fft.setInput(mic);
   //initial controller
   toggleControll();
 }
@@ -60,9 +71,19 @@ function draw() {
   getVolume();
   getPitch();
 
+  if (mouseIsPressed){
+    player.x = mouseX;
+    player.y = mouseY;
+  }
+  
+  level.update(player.x,player.y,50);
+  level.display();
+
+
+
   noStroke();
   fill(0, 255, 0);
-  ellipse(player.x, player.y, 100, 100);
+  ellipse(player.x, player.y, 50, 50);
 }
 
 //Yang edit: I changed the name to toggle controll;
