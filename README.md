@@ -10,4 +10,5 @@ Control movement along the X axis with pitch (low to high), and change position 
 Each player should navigate here on their own computer: https://whistle-the-dots.glitch.me/
 
 Aidan, Ellen, Maria, and Yang
+
 Collective Play ITP Spring 2018
