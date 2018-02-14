@@ -17,7 +17,7 @@ let gamePitch = 0;
 let volumeControlOn = false;
 let pitchControlOn = true;
 
-let level;
+let level = null;
 let levelOne;
 
 function setup() {
@@ -26,6 +26,12 @@ function setup() {
     console.log("Connected");
   });
 
+  socket.on('initialDots', function(data) {
+    console.log('got initial dots!');
+    console.log(data);
+    level = new Level(data);
+  });
+  
   socket.on('volume', function(volume) {
     player.y = constrain(map(volume, 0, 1, height, 0), 0, height);
   });
@@ -35,22 +41,26 @@ function setup() {
   });
 
   //Yang edit: I wish canvas could adjust itself by browser/
-  var canvas = createCanvas(windowWidth * 0.58, windowWidth * 0.58, );
+  var canvas = createCanvas(500, 500);
   canvas.parent('canvasHolder');
   player.x = width / 2;
   player.y = height / 2;
 
-  levelOne = [];
-  for (let i = 0; i< 10; i++){
-    // let x = floor(random(width));
-    // let y = floor(random(height));
-    let newDot = {
-      x: floor(random(width)),
-      y: floor(random(height))
-    }
-    levelOne.push(newDot);
-  }
-  level = new Level(levelOne);
+  console.log('sending dot request');
+  socket.emit('sendDots');
+  
+  
+  // levelOne = [];
+  // for (let i = 0; i< 10; i++){
+  //   // let x = floor(random(width));
+  //   // let y = floor(random(height));
+  //   let newDot = {
+  //     x: floor(random(width)),
+  //     y: floor(random(height))
+  //   }
+  //   levelOne.push(newDot);
+  // }
+  
 
   mic = new p5.AudioIn()
   mic.start();
@@ -71,13 +81,21 @@ function draw() {
   getVolume();
   getPitch();
 
-  // if (mouseIsPressed){
-  //   player.x = mouseX;
-  //   player.y = mouseY;
-  // }
+  if (mouseIsPressed){
+    player.x = mouseX;
+    player.y = mouseY;
+  }
 
-  level.update(player.x,player.y,50);
-  level.display();
+  if (level){
+    level.update(player.x,player.y,50);
+    level.display();
+    if (level.isWon){
+      background(255,255,255);
+      textSize(32);
+      textAlign(CENTER);
+      text("YOU WON!!", width/2,height/2);
+    }
+  }
 
   noStroke();
   fill(0, 255, 0);
@@ -88,9 +106,10 @@ function draw() {
 function toggleControll() {
   let ImControlling;
   volumeControlOn = !volumeControlOn;
-  console.log(volumeControlOn, pitchControlOn);
   pitchControlOn = !volumeControlOn;
-  console.log(volumeControlOn, pitchControlOn);
+  
+  console.log("volume control on? ", volumeControlOn);
+  console.log("pitch control on?",  pitchControlOn);
   if (volumeControlOn) {
     ImControlling = "You are now controlling \nthe Y axis (Volume) "
     document.getElementById('adjustVolume').style.display = "block";
@@ -120,9 +139,9 @@ function getVolume() {
     volArray.pop();
   }
 
-  let mappedMic = map(averageMic, 0, adjuster.volumemax, 0, 1);
+  let mappedMic = constrain(map(averageMic, 0, adjuster.volumemax, 0, 1),0,1);
   // Yang edit: only emit this data to server when volumeControlOn
-  if (volumeControlOn) {
+  if (volumeControlOn && frameCount %3 == 0) {
     socket.emit('volume', mappedMic);
   }
 }
@@ -138,9 +157,9 @@ function getPitch() {
     averagePitch *= (1 / pitchArray.length);
     pitchArray.pop();
   }
-  let mappedPitch = map(averagePitch, adjuster.pitchmin, adjuster.pitchmax, 0, 1);
+  let mappedPitch = constrain(map(averagePitch, adjuster.pitchmin, adjuster.pitchmax, 0, 1),0,1);
   // Yang edit: only emit this data to server when pitchControlOn
-  if (pitchControlOn) {
+  if (pitchControlOn && frameCount %3 == 0) {
     socket.emit('pitch', mappedPitch);
   }
 }
