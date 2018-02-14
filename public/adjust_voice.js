@@ -2,7 +2,7 @@
 
 class ADJUSTER {
   constructor() {
-    this.pitchmin = 200;
+    this.pitchmin = 300;
     this.pitchmax = 1800;
     this.volumemin = 0.05;
     this.volumemax = 0.6
@@ -44,6 +44,12 @@ class ADJUSTER {
       adjuster.pitchmax = tem[1];
       console.log(tem);
       adjuster.pitchmin = tem[0];
+      if (adjuster.pitchmin < this.pitchmin) {
+        adjuster.pitchmin = 400;
+      }
+      if (adjuster.pitchmax > this.pitchmax) {
+        adjuster.pitchmax = 1600;
+      }
       adjuster.reads = [];
       setTimeout(function() {
         ClearAllDom();
@@ -92,40 +98,6 @@ class ADJUSTER {
       }, 1500);
     }
   }
-
-  // AdjustVolume() {
-  //   CreateDom();
-  //   document.getElementById('adjTitle').innerHTML = "<br><br>At your comfortable level, <br> please record both <br> your softest volume & your loudest volume.<br>";
-  //   document.getElementById('adjCountDown').innerHTML = "recording will start in 2 seconds";
-  //   // starting in 2 seconds;
-  //   setTimeout(
-  //     function() {
-  //       document.getElementById('adjCountDown').innerHTML = ">> RECORD NOW <<";
-  //       this.reads = [];
-  //       //keep geting data samples every 20ms
-  //       let accquireData = setInterval(
-  //         function() {
-  //           this.reads.push(mic.getLevel())
-  //         },
-  //         20);
-  //       //stop collecting and analyze data after 2 seconds
-  //       setTimeout(function() {
-  //         clearInterval(accquireData);
-  //         document.getElementById('adjCountDown').innerHTML = "successfully adjusted!";
-  //         let tem = MaxMinToAverage(this.reads, 20);
-  //         adjuster.volumemax = tem[1];
-  //         console.log(tem);
-  //         adjuster.volumemin = tem[0];
-  //         this.reads = [];
-  //         setTimeout(function() {
-  //           ClearAllDom();
-  //         }, 1000);
-  //       }, 3000);
-  //     },
-  //     3000);
-  //
-  // }
-
 }
 
 // make a instance
@@ -133,7 +105,7 @@ var adjuster = new ADJUSTER();
 
 function MaxMinSmooth(array, percentToSample) {
   //abandoned 10%
-  let abandoned = Math.floor(array.length / 10);
+  let abandoned = Math.floor(array.length / 5);
   //get 20% percent
   let howmany = Math.floor((array.length / 100) * percentToSample);
   array.sort(function(a, b) {
@@ -180,12 +152,4 @@ function CreateDom() {
 function ClearAllDom() {
   let adjustersDom = document.getElementsByClassName('adjusters');
   adjustersDom[0].parentNode.removeChild(adjustersDom[0]);
-}
-
-
-
-class TIMER {
-  constructor() {
-    ti
-  }
 }
