@@ -31,7 +31,7 @@ function setup() {
     console.log(data);
     level = new Level(data);
   });
-  
+
   socket.on('volume', function(volume) {
     player.y = constrain(map(volume, 0, 1, height, 0), 0, height);
   });
@@ -48,8 +48,8 @@ function setup() {
 
   console.log('sending dot request');
   socket.emit('sendDots');
-  
-  
+
+
   // levelOne = [];
   // for (let i = 0; i< 10; i++){
   //   // let x = floor(random(width));
@@ -60,7 +60,7 @@ function setup() {
   //   }
   //   levelOne.push(newDot);
   // }
-  
+
 
   mic = new p5.AudioIn()
   mic.start();
@@ -75,7 +75,7 @@ function draw() {
   // if ((frameCount % 60) == 1 ) {
   //   console.log(adjuster);
   // }
-  background('#898F97');
+  // background('#898F97');
   // Yang edit: I moved this "if" inside the function so that I can debug easily.
   // which means, I read both pitch and volume, but I only "emit" one to server.
   getVolume();
@@ -107,7 +107,7 @@ function toggleControll() {
   let ImControlling;
   volumeControlOn = !volumeControlOn;
   pitchControlOn = !volumeControlOn;
-  
+
   console.log("volume control on? ", volumeControlOn);
   console.log("pitch control on?",  pitchControlOn);
   if (volumeControlOn) {
